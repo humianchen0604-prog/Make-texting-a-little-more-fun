@@ -306,12 +306,14 @@ function render(){
   renderKeys();renderQT();
 }
 function autoShift(){shift=!text||/[.!?…]\s$/.test(text)||/\n$/.test(text);}
+function quick(){const i=['1','2','3'].indexOf(text);if(i>-1){text=PHRASES[i];layer='abc';shift=false;}}
 function insert(ch){
   if(ch==="'"&&/[A-Za-z]$/.test(text))ch='’';           // smart apostrophe
   text+=ch;
   if(text.endsWith('...'))text=text.slice(0,-3)+'…';     // smart ellipsis
   if(layer==='abc'&&!caps)autoShift();
   if(ch===' '&&layer!=='abc')layer='abc';
+  quick();
   render();
 }
 function backspace(){text=[...text].slice(0,-1).join('');if(layer==='abc'&&!caps)autoShift();render();}
@@ -404,7 +406,7 @@ document.addEventListener('keydown',e=>{
     if(/[a-z]/i.test(k)&&layer!=='abc')layer='abc';
     text+=k==="'"&&/[A-Za-z]$/.test(text)?'’':k;
     if(text.endsWith('...'))text=text.slice(0,-3)+'…';
-    if(!caps)autoShift();render();flash(k===' '?'SPACE':k.toLowerCase());
+    if(!caps)autoShift();quick();render();flash(k===' '?'SPACE':k.toLowerCase());
   }
 });
 function flash(k){const b=[...rowsEl.querySelectorAll('.key')].find(x=>x.dataset.k===k);if(!b)return;b.classList.add('press');setTimeout(()=>b.classList.remove('press'),110);}
