@@ -68,11 +68,10 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .row{display:flex;justify-content:flex-end;padding:2px 16px 0 60px}
 .plain{position:relative;max-width:100%;padding:7px 13px 8px;border-radius:19px;background:var(--blue);color:#fff;font:400 17px/22px var(--sf);letter-spacing:-.015em;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
 .plain::after{content:"";position:absolute;right:-6px;bottom:0;width:17px;height:21px;background:var(--blue);clip-path:path('M0 0C1 9 5 15 17 20C9 21 3 19 0 13Z')}
-/* animated rows keep headroom only while the effect plays (z's, balloon, stretch),
-   then settle tight like consecutive iMessage bubbles */
-.fx-row{display:flex;justify-content:flex-end;padding:34px 16px 4px 40px;transition:padding 320ms cubic-bezier(.23,1,.32,1)}
-.fx-row.settled{padding-top:10px;padding-bottom:2px}
-@media (prefers-reduced-motion: reduce){.fx-row{transition:none}}
+/* animated rows take their final spacing from the start, so nothing above them shifts after the effect;
+   the z's and breath balloon simply float over the space above */
+.fx-row{display:flex;justify-content:flex-end;padding:10px 16px 2px 40px}
+.fx-row.fx-yawn{padding-top:14px} /* a little more air above the yawn bubble */
 .delivered{text-align:right;padding:7px 18px 0;font:500 11px/1.2 var(--sf);color:var(--gray)}
 
 /* ---------- composer: iOS 26 bottom toolbar (Apple Figma kit, "Search + Leading Item") ---------- */
@@ -113,7 +112,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 @media (max-width:440px){.kb{border-radius:27px 27px 0 0}}
 /* autocorrection bar */
 .qt{display:flex;gap:6px;align-items:center;height:52px;width:100%;padding:0 8.5px}
-.qt button{flex:1 0 0;min-width:1px;height:100%;border-radius:4.6px;font:400 17px/22px var(--sf);letter-spacing:-.43px;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt button{flex:1 0 0;min-width:1px;height:100%;border-radius:4.6px;font:400 16px/22px var(--sf);letter-spacing:-.5px;padding:0 2px;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qt button:active{background:rgba(255,255,255,.6)}
 .qt .sep{flex:none;height:25px;padding:0 2px;display:flex}
 .qt .sep i{width:1px;height:100%;border-radius:100px;background:rgba(0,0,0,.12)}
@@ -183,6 +182,28 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .zb path{fill:none;stroke:var(--lid);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
 .zb path.zo{stroke:#fff;stroke-width:7}
 .k-eye{--bg:radial-gradient(70% 90% at 50% 55%,#1A3592 0%,#2550C6 55%,#3F80EC 100%);--ink2:#EEF3FF;--lid:#3F80EC;--bgr:.85}
+/* touch some grass: sky bubble with a painterly meadow inside; a ladybug peeks out of the grass */
+.e-grass .t{translate:0 -2px}
+.e-grass .face{padding:11px 18px 13px}
+.turf{position:absolute;inset:0;overflow:hidden;z-index:1;pointer-events:none;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent),linear-gradient(transparent,#000 6px,#000 calc(100% - 4px),transparent);
+  -webkit-mask-composite:source-in;
+  mask:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent),linear-gradient(transparent,#000 6px,#000 calc(100% - 4px),transparent);
+  mask-composite:intersect}
+.lawn{position:absolute;left:0;right:0;bottom:0;height:28px}
+.lawn>svg{position:absolute;inset:0;width:100%;height:100%}
+.bug{position:absolute;width:20px;height:14px;pointer-events:none}
+.bug.nest{left:23px;bottom:3px}
+.bug svg{display:block;overflow:visible}
+.bug .el1,.bug .el2,.bug .hw{transform-box:fill-box}
+.bug .el1{transform-origin:100% 100%}.bug .el2{transform-origin:100% 0%}
+.bug .hw{transform-origin:85% 50%;opacity:0}
+.bug.nest{left:13px;bottom:2px;width:16px;height:11px}
+.bug svg{width:100%;height:100%}
+.bl{transform-box:fill-box;transform-origin:50% 100%;animation:idlesway 3.4s ease-in-out infinite alternate;animation-delay:calc(var(--x) * -3s)}
+@keyframes idlesway{from{transform:rotate(-1.5deg)}to{transform:rotate(2.5deg)}}
+@media (prefers-reduced-motion: reduce){.bl{animation:none}}
+.k-grass{--bg:radial-gradient(60% 90% at 82% 0%,rgba(255,250,214,.95) 0%,rgba(255,250,214,0) 70%),linear-gradient(#A9D8FF 0%,#C9E7FF 40%,#E9F6FF 75%,#F6FBF2 100%);--ink2:#4A7536;--g1:#9CD06A;--g2:#5E9E3E;--g3:#C6E595;--g4:#3F7F2E;--bgr:.6}
 .k-pencil{--bg:radial-gradient(120% 150% at 40% 30%,#FBC9C8 0%,#F5A6AB 55%,#ED8D97 100%);--ink2:#8C1E34;--tf:blur(.25px);--bgr:.95}
 
 @media (prefers-reduced-motion: reduce){.caret{animation:none}.kbwrap{transition:none}}
@@ -201,6 +222,13 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
   <filter id="softgrain" x="-30%" y="-30%" width="160%" height="160%">
     <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="b"/>
     <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch" result="n"/>
+    <feColorMatrix in="n" type="saturate" values="0" result="ng"/>
+    <feBlend in="ng" in2="b" mode="overlay" result="o"/>
+    <feComposite in="o" in2="b" operator="in"/>
+  </filter>
+  <filter id="grassgrain" x="-20%" y="-40%" width="140%" height="180%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation=".35" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch" result="n"/>
     <feColorMatrix in="n" type="saturate" values="0" result="ng"/>
     <feBlend in="ng" in2="b" mode="overlay" result="o"/>
     <feComposite in="o" in2="b" operator="in"/>
@@ -265,16 +293,17 @@ const $=id=>document.getElementById(id);
 const phone=$('phone'),thread=$('thread'),txtEl=$('txt'),ph=$('ph'),sendBtn=$('send'),mic=$('mic'),qt=$('qt'),rowsEl=$('rows');
 
 /* ---------- message matching ---------- */
-const PHRASES=['I’m so tired…','I just woke up'];
+const PHRASES=['I’m so tired…','I just woke up','touch some grass'];
 const norm=s=>s.toLowerCase().replace(/[’']/g,'').replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
-const kindOf=s=>{const n=norm(s);if(n==='im so tired')return 'lid';if(n==='i just woke up')return 'yawn';return null;};
+const kindOf=s=>{const n=norm(s);if(n==='im so tired')return 'lid';if(n==='i just woke up')return 'yawn';if(n==='touch some grass')return 'grass';return null;};
 
 /* ---------- typing state ---------- */
 let text='',shift=true,caps=false,layer='abc';
 function render(){
   txtEl.textContent=text;
   ph.hidden=!!text;
-  const has=!!text.trim();$('field').classList.toggle('has-text',has);sendBtn.tabIndex=has?0:-1;sendBtn.setAttribute('aria-hidden',has?'false':'true');
+  const has=!!kindOf(text);   // the send pill only appears for one of the three designed messages
+  $('field').classList.toggle('has-text',has);sendBtn.tabIndex=has?0:-1;sendBtn.setAttribute('aria-hidden',has?'false':'true');
   renderKeys();renderQT();
 }
 function autoShift(){shift=!text||/[.!?…]\s$/.test(text)||/\n$/.test(text);}
@@ -326,13 +355,8 @@ function renderKeys(){
   });
 }
 function renderQT(){
-  const n=norm(text),words=text.split(/\s+/),last=words[words.length-1]||'';
-  let s;
-  if(!text)s=['I',PHRASES[0],PHRASES[1]];
-  else{
-    const m=PHRASES.filter(p=>norm(p).startsWith(n)&&norm(p)!==n);
-    s=[last?`“${last}”`:'I',m[0]||'so',m[1]||(m[0]?'too':'the')];
-  }
+  // the suggestion bar always offers the three messages, best match first
+  const n=norm(text),hit=PHRASES.filter(p=>norm(p).startsWith(n)),s=[...hit,...PHRASES.filter(p=>!hit.includes(p))];
   qt.textContent='';
   s.forEach((w,i)=>{if(i){const sep=mk('span','sep');sep.innerHTML='<i></i>';qt.append(sep);}const b=mk('button');b.type='button';b.textContent=w;b.addEventListener('click',()=>pickSuggestion(w));qt.append(b);});
 }
@@ -393,23 +417,19 @@ thread.addEventListener('click',e=>{if(!e.target.closest('.b'))setKB(false);});
 /* ---------- sending ---------- */
 let first=true;
 function scrollEnd(){thread.scrollTop=thread.scrollHeight;}
+function nope(){ // anything other than the three messages can't be sent: a small shake says so
+  if(RM.matches)return;
+  $('field').animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:300,easing:'cubic-bezier(.23,1,.32,1)'});
+}
 function send(){
-  const msg=text.trim();if(!msg)return;
+  const msg=text.trim(),kind=kindOf(msg);
+  if(!kind){if(msg)nope();return;}
   text='';layer='abc';caps=false;shift=true;render();
   if(first){first=false;const s=mk('div','stamp');s.innerHTML='<b>iMessage</b><br>Today 9:41 PM';thread.append(s);}
   thread.querySelectorAll('.delivered').forEach(d=>d.remove());
-  const kind=kindOf(msg);
-  let row;
-  if(kind){
-    row=mk('div','fx-row');
-    const it=makeBubble(kind,msg,kind==='yawn'?'balloon':null);
-    row.append(it.b);thread.append(row);
-    requestAnimationFrame(()=>{scrollEnd();play(it);});
-  }else{
-    row=mk('div','row');const p=mk('div','plain');p.textContent=msg;row.append(p);thread.append(row);
-    if(!RM.matches)p.animate([{transform:'translateY(24px) scale(.92)',opacity:0},{transform:'none',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.8,.3,1)'});
-    scrollEnd();
-  }
+  const row=mk('div','fx-row fx-'+kind),it=makeBubble(kind,msg,kind==='yawn'?'balloon':null);
+  row.append(it.b);thread.append(row);
+  requestAnimationFrame(()=>{scrollEnd();play(it);});
   const d=mk('div','delivered');d.textContent='Delivered';thread.append(d);
   scrollEnd();
 }
@@ -417,15 +437,17 @@ sendBtn.addEventListener('click',e=>{e.stopPropagation();send();});
 
 /* ---------- animated bubbles ---------- */
 function makeBubble(kind,msg,emit){
-  const b=mk('button',`b ${kind==='lid'?'k-eye e-lid ind-corner':'k-pencil e-yawn ind-none'}`);b.type='button';
+  const b=mk('button',`b ${kind==='lid'?'k-eye e-lid ind-corner':kind==='yawn'?'k-pencil e-yawn ind-none':'k-grass e-grass ind-none'}`);b.type='button';
   b.setAttribute('aria-label',`${msg}. Tap to replay the effect.`);
   b.innerHTML=`<span class="body"><span class="face"><span class="bg"></span><span class="grain"></span>
     ${kind==='yawn'?'<span class="under"><span class="mouth"></span></span>':''}
+    ${kind==='grass'?(m=>`<span class="turf"><span class="lawn">${m.back}<span class="bug nest">${BUGSVG}</span>${m.front}</span></span>`)(lawnSVG(110)):''}
     <span class="t"></span>
     ${kind==='lid'?'<span class="over"><span class="lid"></span></span>':''}</span></span>`;
   b.querySelector('.t').textContent=msg;
   const q=c=>b.querySelector(c);
-  const it={kind,emit,b,body:q('.body'),t:q('.t'),lid:q('.lid'),mouth:q('.mouth'),anims:[],gen:0};
+  const it={kind,emit,b,body:q('.body'),t:q('.t'),lid:q('.lid'),mouth:q('.mouth'),lawn:q('.lawn'),bug:q('.bug.nest'),anims:[],gen:0};
+  if(it.lawn)it.blades=[...it.lawn.querySelectorAll('.bl')].map(el=>({el,x:+el.dataset.x/200}));
   b.addEventListener('click',()=>play(it));
   return it;
 }
@@ -450,9 +472,9 @@ function floatZ(it,D){
     const sway=i%2?8:-6;
     A(it,z,[
       {transform:'translate(0,0) scale(.5) rotate(-10deg)',opacity:0},
-      {transform:`translate(${sway}px,-14px) scale(.85) rotate(6deg)`,opacity:1,offset:.25},
-      {transform:`translate(${-sway*.6}px,-34px) scale(1.05) rotate(-6deg)`,opacity:.9,offset:.6},
-      {transform:`translate(${sway*1.2}px,-54px) scale(1.25) rotate(8deg)`,opacity:0}],
+      {transform:`translate(9px,${-3+sway*.2}px) scale(.85) rotate(6deg)`,opacity:1,offset:.25},
+      {transform:`translate(20px,${-6-sway*.2}px) scale(1.05) rotate(-6deg)`,opacity:.9,offset:.6},
+      {transform:`translate(32px,${-9+sway*.15}px) scale(1.15) rotate(8deg)`,opacity:0}],
       {duration:1400,delay:D*(.14+i*.08),easing:'cubic-bezier(.3,.3,.45,1)'});
   }
   setTimeout(()=>g.remove(),D+600);
@@ -494,16 +516,75 @@ function yawnFx(it){
   A(it,it.t,kf([{transform:'translateY(0) scale(1)'},{transform:'translateY(-10%) scale(.97)',offset:.14},{transform:'translateY(-62%) scale(.88)',offset:.32},{transform:'translateY(-66%) scale(.87)',offset:.5},{transform:'translateY(-62%) scale(.88)',offset:.62},{transform:'translateY(0) scale(1)',offset:.8},{transform:'translateY(0) scale(1)'}]),{duration:D});
   return A(it,it.body,kf([{transform:'scale(1,1)'},{transform:'scale(1.03,1.24)',offset:.32},{transform:'scale(1.04,1.21)',offset:.42},{transform:'scale(1.03,1.26)',offset:.52},{transform:'scale(1.04,1.22)',offset:.62},{transform:'scale(.98,.94)',offset:.8},{transform:'scale(1.01,1.02)',offset:.91},{transform:'scale(1,1)'}]),{duration:D});
 }
+
+/* ---------- touch some grass ---------- */
+const OUT='cubic-bezier(.23,1,.32,1)';
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const BUG='<g class="hw"><ellipse cx="6" cy="3" rx="7" ry="2.8" fill="#EEF4FF" opacity=".8"/><ellipse cx="6" cy="11" rx="7" ry="2.8" fill="#EEF4FF" opacity=".8"/></g>'+
+  '<ellipse cx="8.5" cy="7" rx="7" ry="5.4" fill="#2A0F0D"/>'+
+  '<g class="el1"><path d="M15.2 7A6.9 5.6 0 0 0 1.4 7Z" fill="#E2463B"/><circle cx="5" cy="4.6" r="1.05" fill="#2A0F0D"/><circle cx="10" cy="4.2" r="1" fill="#2A0F0D"/></g>'+
+  '<g class="el2"><path d="M15.2 7A6.9 5.6 0 0 1 1.4 7Z" fill="#E2463B"/><circle cx="5" cy="9.4" r="1.05" fill="#2A0F0D"/><circle cx="10" cy="9.8" r="1" fill="#2A0F0D"/></g>'+
+  '<circle cx="16.2" cy="7" r="2.7" fill="#2A0F0D"/><circle cx="17.2" cy="6" r=".7" fill="#fff"/>';
+const BUGSVG=`<svg viewBox="0 0 20 14" width="20" height="14" aria-hidden="true">${BUG}</svg>`;
+function lawnSVG(seed){
+  // painterly meadow: clumps of thin curved strokes in four greens, leaning a little with the wind,
+  // over a soft green ground; a few tiny white flowers. Each clump is a .bl group so it can sway.
+  const r=rng(seed),f=n=>+n.toFixed(1),H=44;
+  const clump=(cx,n,hMin,hMax,cols,op)=>{
+    let o='';for(let k=0;k<n;k++){
+      const x=cx+(r()-.5)*9,h=hMin+r()*(hMax-hMin),lean=(r()-.25)*13,sw=.7+r()*1.2,c=cols[(r()*cols.length)|0];
+      o+=`<path d="M${f(x)} ${H+1}Q${f(x+lean*.25)} ${f(H-h*.6)} ${f(x+lean)} ${f(H-h)}" stroke="var(--${c})" stroke-width="${f(sw)}" stroke-linecap="round" fill="none" opacity="${(op+r()*.3).toFixed(2)}"/>`;}
+    return o;};
+  const layer=(n,blades,hMin,hMax,cols,op,flowers)=>{let o='';for(let i=0;i<n;i++){
+    const cx=(i+.5)/n*200+(r()-.5)*6;
+    let fl='';if(flowers&&r()<flowers){const fx=cx+(r()-.5)*6,fy=H-6-r()*12;fl=`<circle cx="${f(fx)}" cy="${f(fy)}" r="1.7" fill="#FFFFFF"/><circle cx="${f(fx)}" cy="${f(fy)}" r=".65" fill="#F0CF5A"/>`;}
+    o+=`<g class="bl" data-x="${f(cx)}" style="--x:${(cx/200).toFixed(3)}">${clump(cx,blades,hMin,hMax,cols,op)}${fl}</g>`;}return o;};
+  const svg=inner=>`<svg viewBox="0 0 200 ${H}" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#grassgrain)">${inner}</g></svg>`;
+  const back=`<defs><linearGradient id="gnd${seed}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" style="stop-color:var(--g2);stop-opacity:0"/><stop offset="1" style="stop-color:var(--g2);stop-opacity:.75"/></linearGradient></defs>
+    <rect x="-4" y="16" width="208" height="30" fill="url(#gnd${seed})"/>${layer(30,6,14,30,['g4','g2','g2','g1'],.5,0)}`;
+  const front=layer(26,5,8,20,['g1','g1','g3','g2'],.6,.18)+layer(18,4,5,12,['g3','g1'],.55,0);
+  return {back:svg(back),front:svg(front)};
+}
+
+function geo(it){ // lawn + bubble geometry relative to the button, measured after the bubble has landed
+  const br=it.b.getBoundingClientRect(),lr=it.lawn.getBoundingClientRect(),fr=it.b.querySelector('.face').getBoundingClientRect();
+  return {lx:lr.left-br.left,ly:lr.top-br.top,lw:lr.width,lh:lr.height,bw:fr.width,bh:fr.height,fx:fr.left-br.left,fy:fr.top-br.top};
+}
+
+/* a gust: each clump bends in turn as the wind passes left to right */
+function windGust(it,delay,dur=1600){
+  it.blades.forEach(B=>A(it,B.el,kf([{transform:'rotate(0)'},{transform:'rotate(11deg)',offset:.35},{transform:'rotate(-4deg)',offset:.65},{transform:'rotate(1deg)',offset:.85},{transform:'rotate(0)'}]),{duration:1100,delay:delay+B.x*dur*.75}));
+}
+
+const GFX={
+  ladybug(it,D){ // starts crawling and sinks gradually into the meadow, so the front grass slowly covers it
+    const bug=it.bug,walk=2200,dx=geo(it).bw*.5,deep=11;
+    const nr=bug.getBoundingClientRect(),lr=it.lawn.getBoundingClientRect();
+    const x0f=(nr.left+nr.width/2-lr.left)/lr.width,x1f=x0f+dx/lr.width;
+    const sink=t=>{const u=Math.min(1,t/.85);return deep*(u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2);};   // eases in, then settles deep
+    const steps=[];for(let i=0;i<=16;i++){const t=i/16;steps.push({transform:`translate(${(dx*t).toFixed(1)}px,${(sink(t)+(i%2?-.8:0)).toFixed(1)}px) rotate(${(3*Math.sin(t*9)).toFixed(1)}deg)`,offset:t});}
+    A(it,bug,steps,{duration:walk,delay:150,easing:'linear',fill:'forwards'});
+    // the grass rustles above it as it creeps through
+    it.blades.forEach(B=>{if(B.x<x0f-.03||B.x>x1f+.03)return;
+      A(it,B.el,kf([{transform:'rotate(0)'},{transform:'rotate(-10deg)',offset:.4},{transform:'rotate(3deg)',offset:.7},{transform:'rotate(0)'}]),{duration:520,delay:150+(B.x-x0f)/(x1f-x0f)*walk-160});});
+    // after a pause it climbs back up, peeking out under the "t"
+    A(it,bug,[{opacity:0,transform:`translate(0,${deep}px)`},{opacity:1,transform:`translate(0,${deep*.6}px)`,offset:.3},{opacity:1,transform:'translate(0,0)'}],{duration:700,delay:150+walk+900,easing:OUT,fill:'both'});
+  },
+};
+function grassFx(it){
+  const D=3000;
+  GFX.ladybug(it,D);
+  return A(it,it.lawn,[{opacity:1},{opacity:1}],{duration:D+300});
+}
+
 async function play(it){
-  const g=stop(it),row=it.b.closest('.fx-row');
-  if(row)row.classList.remove('settled');
-  await run(it,g);
-  if(g===it.gen&&row){row.classList.add('settled');setTimeout(scrollEnd,340);}
+  await run(it,stop(it));
 }
 async function run(it,g){
   if(RM.matches){await A(it,it.body,[{opacity:0},{opacity:1}],{duration:500,easing:'ease-out'});return;}
   await arrive(it);if(g!==it.gen)return;
-  await (it.kind==='lid'?lidFx(it):yawnFx(it));
+  await (it.kind==='lid'?lidFx(it):it.kind==='yawn'?yawnFx(it):grassFx(it));
 }
 
 render();
